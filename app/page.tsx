@@ -9,11 +9,7 @@ import Search from "./_components/search";
 import CategoryList from "./_components/categoryList";
 import PromoBanner from "./_components/promo-banner";
 import ProductList from "./_components/productList";
-<<<<<<< HEAD
 import RecomendedItemList from "./_components/recomended-item-list";
-=======
-import RestaurantList from "./_components/restaurant-list";
->>>>>>> e9c9f266372820f995b32bb02b78b4d84162adc0
 
 const fetch = async () => {
   const getProducts = await db.product.findMany({
@@ -171,12 +167,7 @@ const Home = async () => {
                 </Link>
               </Button>
             </div>
-
-<<<<<<< HEAD
             <RecomendedItemList />
-=======
-            <RestaurantList />
->>>>>>> e9c9f266372820f995b32bb02b78b4d84162adc0
           </div>
         </div>
       </div>

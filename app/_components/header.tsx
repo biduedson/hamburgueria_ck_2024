@@ -22,10 +22,7 @@ import {
 } from "./ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Separator } from "./ui/separator";
-<<<<<<< HEAD
-=======
 import Search from "./search";
->>>>>>> e9c9f266372820f995b32bb02b78b4d84162adc0
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,10 +35,6 @@ import {
 } from "./ui/alert-dialog";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-<<<<<<< HEAD
-import Search from "./search";
-=======
->>>>>>> e9c9f266372820f995b32bb02b78b4d84162adc0
 
 interface IHeaderProps {
   isSearch: boolean;
@@ -50,11 +43,7 @@ interface IHeaderProps {
 const Header = ({ isSearch }: IHeaderProps) => {
   const { data } = useSession();
   const [idRestaurant, setIdRestaurant] = useState<string | null | undefined>(
-<<<<<<< HEAD
     null
-=======
-    null,
->>>>>>> e9c9f266372820f995b32bb02b78b4d84162adc0
   );
   const [loading, setLoading] = useState(true);
 
@@ -216,11 +205,7 @@ const Header = ({ isSearch }: IHeaderProps) => {
                       className="w-full justify-start space-x-3 rounded-full text-sm font-normal"
                       asChild
                     >
-<<<<<<< HEAD
                       <Link href="/dashboard/">
-=======
-                      <Link href={`/dashboard/${idRestaurant}`}>
->>>>>>> e9c9f266372820f995b32bb02b78b4d84162adc0
                         <LayoutDashboardIcon size={16} />
                         <span className="block">Meu Restaurante</span>
                       </Link>

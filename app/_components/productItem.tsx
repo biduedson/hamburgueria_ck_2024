@@ -8,16 +8,8 @@ import { cn } from "../_lib/utils";
 interface ProductsItemProps {
   product: Prisma.ProductGetPayload<{
     include: {
-<<<<<<< HEAD
       restaurant: true;
       category: true;
-=======
-      restaurant: {
-        select: {
-          name: true;
-        };
-      };
->>>>>>> e9c9f266372820f995b32bb02b78b4d84162adc0
     };
   }>;
   className?: string;
@@ -28,11 +20,7 @@ const ProductItem = ({ product, className }: ProductsItemProps) => {
     <Link
       className={cn(
         "w-[150px] min-w-[150px] px-0 lg:w-[135px] lg:min-w-[135px]",
-<<<<<<< HEAD
         className
-=======
-        className,
->>>>>>> e9c9f266372820f995b32bb02b78b4d84162adc0
       )}
       href={`/products/${product.id}`}
     >
