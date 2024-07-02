@@ -1,4 +1,4 @@
-import { UserFavoriteRestaurants } from "@prisma/client"
+import {UserFavoriteProducts } from "@prisma/client"
 
-export const isRestaurantFavorited = ( restaurantId: string, userFavoriteRestaurants: UserFavoriteRestaurants[]) =>
-   userFavoriteRestaurants?.some((favoriteRestaurant) => favoriteRestaurant.restaurantId === restaurantId)
+export const isProductFavorited = ( productId: string, userFavoriteProducts: UserFavoriteProducts[]) =>
+   userFavoriteProducts?.some((favoriteProduct) => favoriteProduct.productId === productId)

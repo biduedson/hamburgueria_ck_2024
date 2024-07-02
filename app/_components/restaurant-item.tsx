@@ -1,6 +1,6 @@
 "use client";
 
-import { Restaurant } from "@prisma/client";
+import { Product, Restaurant, UserFavoriteProducts } from "@prisma/client";
 import { BikeIcon, HeartIcon, StarIcon, TimerIcon } from "lucide-react";
 import Image from "next/image";
 import { formatCurrency } from "../_helpers/price";
@@ -19,14 +19,21 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "./ui/alert-dialog";
+import { isProductFavorited } from "../_helpers/restaurant";
 
 interface RestaurantItemProps {
   userId?: string;
-  restaurant: Restaurant;
+  product: Product;
   className?: string;
+  userFavoriteProducts: UserFavoriteProducts[];
 }
 
-const RestaurantItem = ({ restaurant, className }: RestaurantItemProps) => {
+const RestaurantItem = ({
+  userId,
+  product,
+  userFavoriteProducts,
+  className,
+}: RestaurantItemProps) => {
   const { data } = useSession();
   const [showMessage, setShowMessage] = useState(false);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
@@ -36,26 +43,10 @@ const RestaurantItem = ({ restaurant, className }: RestaurantItemProps) => {
   const openCloseDialog = () => {
     setIsConfirmDialogOpen(!isConfirmDialogOpen);
   };
-  /*const handleFavoriteClick = async () => {
-    if (!data?.user.id) return;
-    setIsSubmiLoading(true);
-
-    try {
-      await toggleFavoriteRestaurant(data.user.id, restaurant.id);
-      toast.success(
-        isFavorite
-          ? "Restaurante removido dos seus favoritos."
-          : "Restaurante adicionado aos seus favoritos.",
-        {
-          duration: 1200,
-        }
-      );
-    } catch (error) {
-      toast.error("Erro ao favoritar restaurante.");
-    } finally {
-      setIsConfirmDialogOpen(false);
-    }
-  };*/
+  if (!userId) {
+    return null;
+  }
+  const isFavorited = isProductFavorited(userId, userFavoriteProducts);
   return (
     <div
       className={cn(
@@ -67,12 +58,12 @@ const RestaurantItem = ({ restaurant, className }: RestaurantItemProps) => {
         {/*IMAGE*/}
 
         <div className="relative h-[136px] w-full lg:block lg:h-[165px] lg:w-[27vw] xl:w-[26vw]">
-          <Link href={`/restaurants/${restaurant.id}`}>
+          <Link href={`/products/${product.id}`}>
             <Image
-              src={restaurant.imageUrl}
+              src={product.imageUrl}
               fill
               className="rounded-lg object-cover "
-              alt={restaurant.name}
+              alt={product.name}
             />
           </Link>
 
@@ -83,7 +74,7 @@ const RestaurantItem = ({ restaurant, className }: RestaurantItemProps) => {
 
           {data?.user.id && (
             <div
-              className={`absolute right-2 top-2 flex h-7 w-7 cursor-pointer  items-center justify-center rounded-full  ${isFavorite ? "bg-red-700" : "bg-gray-500 hover:bg-gray-700 "} `}
+              className={`absolute right-2 top-2 flex h-7 w-7 cursor-pointer  items-center justify-center rounded-full  ${isFavorited ? "bg-red-700" : "bg-gray-500 hover:bg-gray-700 "} `}
               onClick={openCloseDialog}
               onMouseLeave={() => setShowMessage(false)}
               onMouseEnter={() => setShowMessage(true)}
@@ -95,25 +86,10 @@ const RestaurantItem = ({ restaurant, className }: RestaurantItemProps) => {
 
         {/*TEXTO*/}
         <div>
-          <h3 className="text-sm font-semibold">{restaurant.name}</h3>
+          <h3 className="text-sm font-semibold">{product.name}</h3>
           <div className="flex gap-3">
-            {/*CUSTO DE ENTREGA*/}
-            <div className="flex items-center gap-1">
-              <BikeIcon className="text-primary" size={12} />
-              <span className="text-xs text-muted-foreground">
-                {Number(restaurant.deliveryFee) === 0
-                  ? "Entrega grátis"
-                  : formatCurrency(Number(restaurant.deliveryFee))}
-              </span>
-            </div>
-
             {/*TEMPO DE ENTREGA*/}
-            <div className="flex items-center gap-1">
-              <TimerIcon className="text-primary" size={12} />
-              <span className="text-xs text-muted-foreground">
-                {restaurant.deliveryTimeMinutes} min
-              </span>
-            </div>
+            <div className="flex items-center gap-1"></div>
           </div>
         </div>
       </div>

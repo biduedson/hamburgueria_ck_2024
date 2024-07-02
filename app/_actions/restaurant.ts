@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache"
 import { db } from "../_lib/prisma"
 
-export const toggleFavoriteRestaurant = async (
+export const toggleFavoriteProduct = async (
     userId:string, 
     productId:string
 )=>{

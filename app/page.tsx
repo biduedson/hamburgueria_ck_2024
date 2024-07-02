@@ -1,178 +1,173 @@
-import { Button } from "./_components/ui/button";
-import { ChevronRightIcon } from "lucide-react";
-import { db } from "./_lib/prisma";
-import Link from "next/link";
-import getConfig from "next/config";
+import { db } from "@/app/_lib/prisma";
+import { notFound } from "next/navigation";
+import RestaurantImage from "./restaurant/_components/restaurant-image";
 import Image from "next/image";
-import Header from "./_components/header";
-import Search from "./_components/search";
+import { ChevronRightIcon, StarIcon } from "lucide-react";
+import Deliveryinfo from "@/app/_components/delivery-info";
+import ProductList from "@/app/_components/productList";
+import CartBanner from "./restaurant/_components/cart-banner";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/_lib/auth";
+import { Button } from "@/app/_components/ui/button";
+import Link from "next/link";
+import Header from "@/app/_components/header";
+import { Separator } from "@/app/_components/ui/separator";
 import CategoryList from "./_components/categoryList";
-import PromoBanner from "./_components/promo-banner";
-import ProductList from "./_components/productList";
-import RecomendedItemList from "./_components/recomended-item-list";
 
-const fetch = async () => {
-  const getProducts = await db.product.findMany({
-    where: {
-      discountPercentage: {
-        gt: 0,
-      },
-    },
-    take: 10,
+const RestaurantPage = async () => {
+  const [restaurant] = await db.restaurant.findMany({
     include: {
-      restaurant: {
-        select: {
-          name: true,
+      categories: {
+        orderBy: {
+          createdAt: "desc",
+        },
+        include: {
+          products: {
+            include: {
+              restaurant: true,
+              category: true,
+            },
+          },
+        },
+      },
+      products: {
+        take: 10,
+        include: {
+          category: true,
+          restaurant: true,
         },
       },
     },
   });
+  console.log("AQUI");
 
-  const getBurguersCategory = db.category.findFirst({
-    where: {
-      name: "Hambúrgueres",
-    },
-  });
-
-  const getPizzasCategory = db.category.findFirst({
-    where: {
-      name: "Pizzas",
-    },
-  });
-
-  const [products, burguersCategory, pizzasCategory] = await Promise.all([
-    getProducts,
-    getBurguersCategory,
-    getPizzasCategory,
-  ]);
-
-  return { products, burguersCategory, pizzasCategory };
-};
-
-const Home = async () => {
-  const { products, burguersCategory, pizzasCategory } = await fetch();
-  const { serverRuntimeConfig } = getConfig();
-
-  if (serverRuntimeConfig.decimalWarning === false) {
-    console.warn = () => {};
+  if (!restaurant) {
+    return notFound();
   }
+  for (let category of restaurant.categories) {
+    console.log(category.name);
+  }
+  const session = await getServerSession(authOptions);
+  const userFavoriteProducts = await db.userFavoriteProducts.findMany({
+    where: {
+      userId: session?.user.id,
+    },
+  });
 
   return (
     <>
-      <Header isSearch={false} />
-      <div className="px-5 pt-5 lg:hidden">
-        <Search YellowButton={true} />
+      <div className=" w-full flex">
+        <Header isSearch={true} />
       </div>
-      <div className="relative hidden h-[500px] w-full  bg-customRed lg:flex">
-        <div className="absolute top-24 lg:left-14 xl:left-24">
-          <div className="mb-4">
-            <h1 className="text-[38px] font-bold text-white xl:text-[48px] ">
-              Está com fome?
-            </h1>
-            <p className="text-sm font-light text-white xl:text-lg">
-              Com apenas alguns cliques, encontre refeições acessíveis perto de
-              você.
-            </p>
-          </div>
-          <div className="flex h-[75px] flex-col items-center justify-center rounded-[10px] bg-white lg:w-[568px] xl:w-[668px] ">
-            <Search />
-          </div>
-        </div>
-        <div className="absolute right-0 lg:bottom-[-93px] xl:bottom-[-53px]">
-          <div className=" relative h-[540px] w-[530px] xl:h-[540px] xl:w-[650px]">
-            <Image
-              src="/hand-food-image-2.png"
-              alt="hero image"
-              fill
-              quality={100}
-              className="object-contain"
-            />
-          </div>
-        </div>
-      </div>
-      <div className="px-5">
-        <div className=" lg:space-y-6 lg:px-12 xl:px-24 2xl:px-28">
-          <div className="pt-6">
-            <CategoryList />
-          </div>
+      <Separator className="mt-3 hidden lg:flex" />
+      <div className="items-center lg:flex lg:w-full lg:flex-col  lg:items-center lg:px-12 lg:py-4 xl:px-16 2xl:px-28   ">
+        <div className=" w-full lg:flex lg:justify-between lg:gap-6">
+          <RestaurantImage restaurant={restaurant} />
 
-          <div className=" pt-6 lg:hidden">
-            <Link href={`/categories/${pizzasCategory?.id}/products`}>
-              <PromoBanner
-                src="/promo-banner-01.png"
-                alt="Até 30% de desconto em pizzas!"
-              />
-            </Link>
-          </div>
+          <div className="lg:flex lg:h-auto lg:w-[402px] lg:flex-col justify-between">
+            <div className="relative z-50 mt-[-1.5rem] flex items-center justify-between rounded-tl-3xl rounded-tr-3xl bg-white px-5 pt-5 lg:px-0">
+              {/*TITULO*/}
+              <div className="flex items-center gap-[0.375rem]">
+                <div className="relative h-8 w-8 ">
+                  <Image
+                    src={restaurant.imageUrl}
+                    alt={restaurant.name}
+                    fill
+                    className="rounded-full object-cover"
+                  />
+                </div>
+                <div className="w-full">
+                  <h1 className="text-xl font-semibold">{restaurant.name}</h1>
+                </div>
+              </div>
 
-          <div className="space-y-4 pt-6 lg:justify-center ">
-            <div className="flex w-full items-center justify-between  lg:px-0">
-              <h2 className="font-semibold">Pedidos Recomendados</h2>
-
-              <Button
-                variant="ghost"
-                className="h-fit p-0 text-primary hover:bg-transparent"
-                asChild //as child esta opçãp do shadcn vai pegar toda configuração do css e jogar para o elemento filho no caso ai o link
-              >
-                <Link href="/products/recomended">
-                  Ver todos
-                  <ChevronRightIcon size={16} />
-                </Link>
-              </Button>
-            </div>
-            <ProductList products={products} />
-          </div>
-
-          <div className="hidden w-full  justify-between gap-8  lg:flex  ">
-            <div className="w-full">
-              <Link href={`/categories/${pizzasCategory?.id}/products`}>
-                <PromoBanner
-                  src="/promo-banner-01.png"
-                  alt="Até 30% de desconto em pizzas!"
+              <div className="flex items-center gap-[3px] rounded-full bg-foreground px-2 py-[2px] text-white">
+                <StarIcon
+                  size={12}
+                  className="fill-yellow-400 text-yellow-400"
                 />
-              </Link>
+                <span className="text-xs font-semibold">5.0</span>
+              </div>
             </div>
 
-            <div className="w-full">
-              <Link href={`/categories/${burguersCategory?.id}/products`}>
-                <PromoBanner
-                  src="/promo-banner-02.png"
-                  alt="A partir de 17,90 em lanches"
-                />
-              </Link>
+            <div className="desktop hidden w-full lg:block">
+              <Deliveryinfo restaurant={restaurant} />
             </div>
-          </div>
-
-          <div className=" pt-6 lg:hidden">
-            <Link href={`/categories/${burguersCategory?.id}/products`}>
-              <PromoBanner
-                src="/promo-banner-02.png"
-                alt="A partir de 17,90 em lanches"
-              />
-            </Link>
-          </div>
-
-          <div className=" items-center space-y-4 pt-6 ">
-            <div className="flex items-center justify-between  lg:px-0">
-              <h2 className="font-semibold">Restaurantes Recomendados</h2>
-
-              <Button
-                variant="ghost"
-                className="h-fit p-0 text-primary hover:bg-transparent"
-                asChild
+            <div className="relative w-full overflow-y-scroll pb-1 lg:h-[65px] [&::-webkit-scrollbar]:hidden">
+              <p
+                className={`${restaurant.categories.length > 0 ? "absolute right-1 top-3 hidden animate-bounce lg:block" : "hidden"}`}
               >
-                <Link href="/restaurants/recomended">
-                  Ver todos
-                  <ChevronRightIcon size={16} />
-                </Link>
-              </Button>
+                &darr;
+              </p>
+              <div className="pt-2">
+                <CategoryList />
+              </div>
             </div>
-            <RecomendedItemList />
+            <div className="h-auto">
+              <h1 className="my-3 hidden text-[16px] font-semibold lg:block">
+                Sobre
+              </h1>
+              <p className="hidden text-justify text-[14px] font-normal leading-[21px] lg:block">
+                O SushiDojo é uma joia gastronômica que transporta seus clientes
+                para o coração do Japão, com sua atmosfera serena, design
+                minimalista e um balcão de sushi onde mestres habilidosos
+                preparam pratos autênticos com ingredientes frescos e
+                selecionados, garantindo uma experiência culinária excepcional e
+                memorável.
+              </p>
+            </div>
           </div>
         </div>
+        <div className="px-5 lg:hidden">
+          <Deliveryinfo restaurant={restaurant} />
+        </div>
+
+        {/*CATEGORIAS*/}
+        <div className="mt-3 flex w-full gap-4 overflow-x-scroll px-5 md:items-center md:justify-center lg:hidden [&::-webkit-scrollbar]:hidden">
+          {restaurant.categories.map((category) => (
+            <div
+              key={category.id}
+              className="min-w-[167px] rounded-lg bg-[#f4f4f4] text-center"
+            >
+              <span className="text-xs text-muted-foreground">
+                {category.name}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-6  w-full  space-y-4  lg:px-0 ">
+          {/*TODO mostrar produtos mais pedidos quando implementarmos a realização de  pedidos */}
+          <div className="flex w-full justify-between">
+            <h2 className=" px-5 font-semibold lg:px-0">
+              Pedidos Recomendados
+            </h2>
+
+            <Button
+              variant="ghost"
+              className="h-fit p-0 text-primary hover:bg-transparent"
+              asChild
+            >
+              <Link href="/products/recomended">
+                Ver todos
+                <ChevronRightIcon size={16} />
+              </Link>
+            </Button>
+          </div>
+          <ProductList products={restaurant.products} />
+        </div>
+
+        {restaurant.categories.map((category) => (
+          <div className="mt-6 w-full space-y-4  lg:px-0" key={category.id}>
+            <h2 className="px-5 font-semibold lg:px-0">{category.name}</h2>
+            <ProductList products={category.products} />
+          </div>
+        ))}
+
+        <CartBanner restaurant={restaurant} />
       </div>
     </>
   );
 };
 
-export default Home;
+export default RestaurantPage;

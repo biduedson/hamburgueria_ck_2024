@@ -19,7 +19,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "./ui/alert-dialog";
-import { toggleFavoriteRestaurant } from "../_actions/restaurant";
+import { toggleFavoriteProduct } from "../_actions/restaurant";
 
 interface RestaurantItemProps {
   userId?: string;
@@ -54,7 +54,7 @@ const RecomendedItem = ({
     setIsSubmiLoading(true);
 
     try {
-      await toggleFavoriteRestaurant(data.user.id, product.id);
+      await toggleFavoriteProduct(data.user.id, product.id);
       toast.success(
         isFavorite
           ? "Item removido dos seus favoritos."
@@ -137,12 +137,12 @@ const RecomendedItem = ({
         <AlertDialogContent className="lg:flex lg:h-[179px] lg:w-[318px] lg:flex-col lg:items-center">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-center">
-              {isFavorite ? "Remover restaurante" : "Adicionar restaurante"}
+              {isFavorite ? "Remover item" : "Adicionar item"}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-center">
               {isFavorite
-                ? "Tem certeza que deseja remover esse restaurante dos favoritos?"
-                : "Tem certeza que deseja adicionar esse restaurante aos favoritos?"}
+                ? "Tem certeza que deseja remover esse item dos favoritos?"
+                : "Tem certeza que deseja adicionar esse item aos favoritos?"}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
