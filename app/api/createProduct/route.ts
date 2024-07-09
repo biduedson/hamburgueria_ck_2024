@@ -12,20 +12,21 @@ export async function POST(req:Request){
   return NextResponse.json( body , {status: statusCode})
 
     const session = await getServerSession(authOptions);
+   
 
     if(!session){
         return NextResponse.json({message: "Usuário não autenticado." }, {status: 401})
     }
     
 
-    const idRestaurant = await db.restaurant.findFirst({ 
+    const [restaurant] = await db.restaurant.findMany({ 
       });
 
-    if(!idRestaurant){
+    if(!restaurant){
         return NextResponse.json({message: "Restaurante não cadastrado." }, {status: 401})
     }
 
-      if(idRestaurant.ownerId !== session.user.id){
+      if(restaurant.ownerId !== session?.user.id){
         return NextResponse.json({message: "Não autorizado." }, {status: 401})
     }
     

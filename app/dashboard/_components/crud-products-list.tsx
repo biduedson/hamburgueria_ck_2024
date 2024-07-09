@@ -15,14 +15,14 @@ import { Button } from "@/app/_components/ui/button";
 import ProductForm from "./form/product-form";
 import AlertDialagDeleteProduct from "./alert-dialogs/alert-dialog-delete-product";
 import AlertDialogError from "./alert-dialogs/aleert-dialog-error";
-import { ICrudProductListProps } from "../types/products-interface";
 import useProductForm from "@/app/hooks/use-products-form";
+import { IDashboardProductsProps } from "../types/types-dashoboard";
 
 const CrudProductsList = ({
-  products,
-  category,
   restaurant,
-}: ICrudProductListProps) => {
+  categories,
+  category,
+}: IDashboardProductsProps) => {
   const {
     isSubmitLoading,
     isConfirmDialogOpen,
@@ -53,7 +53,12 @@ const CrudProductsList = ({
     setOpenModal,
     setBtnOpen,
     setPrice,
-  } = useProductForm({ products, category, restaurant });
+  } = useProductForm({
+    restaurant,
+    categories,
+    category,
+  });
+
   return (
     <>
       <div className="flex w-full   flex-wrap items-center justify-center gap-2 overflow-y-auto bg-[#E5E5E5] lg:flex lg:flex-col">
@@ -163,6 +168,7 @@ const CrudProductsList = ({
             <ProductEditItemCard
               key={product.id}
               product={product}
+              restaurant={restaurant}
               deleteProduct={() => deleteProduct(product.id)}
             />
           ))}

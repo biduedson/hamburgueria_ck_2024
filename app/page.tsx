@@ -60,20 +60,21 @@ const RestaurantPage = async () => {
         <Header isSearch={true} />
       </div>
       <Separator className="mt-3 hidden lg:flex" />
-      <div className="items-center lg:flex lg:w-full lg:flex-col  lg:items-center lg:px-12 lg:py-4 xl:px-16 2xl:px-28   ">
+      <div className="items-center lg:flex lg:w-full lg:flex-col  lg:items-center lg:px-12 lg:py-4 xl:px-16 2xl:px-28">
         <div className=" w-full lg:flex lg:justify-between lg:gap-6">
           <RestaurantImage restaurant={restaurant} />
 
-          <div className="lg:flex lg:h-auto lg:w-[402px] lg:flex-col justify-between">
-            <div className="relative z-50 mt-[-1.5rem] flex items-center justify-between rounded-tl-3xl rounded-tr-3xl bg-white px-5 pt-5 lg:px-0">
+          <div className="lg:flex lg:h-auto lg:w-[402px] lg:flex-col gap-4">
+            <div className="relative z-50 mt-[-2.5rem] flex items-center justify-between rounded-tl-3xl rounded-tr-3xl bg-white px-5 pt-5 lg:px-0">
               {/*TITULO*/}
               <div className="flex items-center gap-[0.375rem]">
-                <div className="relative h-8 w-8 ">
+                <div className="relative h-8 w-8">
                   <Image
                     src={restaurant.imageUrl}
                     alt={restaurant.name}
                     fill
-                    className="rounded-full object-cover"
+                    className="rounded-full object-contain"
+                    sizes="(max-width: 468px) 100vw, 32px"
                   />
                 </div>
                 <div className="w-full">
@@ -99,7 +100,7 @@ const RestaurantPage = async () => {
               >
                 &darr;
               </p>
-              <div className="pt-2">
+              <div className="pt-2 hidden lg:flex">
                 <CategoryList />
               </div>
             </div>
@@ -123,17 +124,13 @@ const RestaurantPage = async () => {
         </div>
 
         {/*CATEGORIAS*/}
-        <div className="mt-3 flex w-full gap-4 overflow-x-scroll px-5 md:items-center md:justify-center lg:hidden [&::-webkit-scrollbar]:hidden">
-          {restaurant.categories.map((category) => (
-            <div
-              key={category.id}
-              className="min-w-[167px] rounded-lg bg-[#f4f4f4] text-center"
-            >
-              <span className="text-xs text-muted-foreground">
-                {category.name}
-              </span>
-            </div>
-          ))}
+        <h1 className=" px-4 py-2 text-xl lg:hidden  font-semibold">
+          Categorias
+        </h1>
+        <div className="mt-3 flex  w-full gap-4 overflow-x-scroll px-5 md:items-center md:justify-center lg:hidden [&::-webkit-scrollbar]:hidden">
+          <div className="pt-2 lg:hidden">
+            <CategoryList />
+          </div>
         </div>
 
         <div className="mt-6  w-full  space-y-4  lg:px-0 ">

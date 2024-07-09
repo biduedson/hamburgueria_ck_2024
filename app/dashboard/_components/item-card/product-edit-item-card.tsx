@@ -21,15 +21,16 @@ import { useState } from "react";
 interface IProductEditItemCardProps {
   product: Prisma.ProductGetPayload<{
     include: {
-      restaurant: true;
       category: true;
     };
   }>;
+  restaurant: Prisma.RestaurantGetPayload<{}>;
   deleteProduct: () => void;
 }
 
 const ProductEditItemCard = ({
   product,
+  restaurant,
   deleteProduct,
 }: IProductEditItemCardProps) => {
   const [isSubmitLoading, setIsSubmiLoading] = useState(false);
@@ -71,7 +72,7 @@ const ProductEditItemCard = ({
         </div>
 
         <span className="block text-xs text-muted-foreground">
-          {product.restaurant.name}
+          {restaurant.name}
         </span>
       </div>
       <div className="flex w-full justify-between gap-2">

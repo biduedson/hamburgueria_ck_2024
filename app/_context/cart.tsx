@@ -4,6 +4,7 @@ import Cookies from "js-cookie";
 import { Prisma, Product } from "@prisma/client";
 import { ReactNode, createContext, useEffect, useMemo, useState } from "react";
 import { calculateProductTotalPrice } from "../_helpers/price";
+import { db } from "../_lib/prisma";
 
 export interface CartProduct
   extends Prisma.ProductGetPayload<{
@@ -20,8 +21,22 @@ export interface CartProduct
   quantity: number;
 }
 
+export interface ICategoryWhitProduct {
+  categoriesWithProducts: Prisma.CategoryGetPayload<{
+    include: {
+      products: {
+        include: {
+          category: true;
+          restaurant: true;
+        };
+      };
+    };
+  }>[];
+}
+
 interface ICartContext {
   products: CartProduct[];
+  categoriesWithProducts: ICategoryWhitProduct | [];
   subTotalPrice: number;
   totalPrice: number;
   totalDiscounts: number;
@@ -41,6 +56,7 @@ interface ICartContext {
 
 export const CartContext = createContext<ICartContext>({
   products: [],
+  categoriesWithProducts: [],
   subTotalPrice: 0,
   totalPrice: 0,
   totalDiscounts: 0,
@@ -56,7 +72,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const initialState = Cookies.get("cart")
     ? JSON.parse(Cookies.get("cart")!)
     : [];
-
+  const [categoriesWithProducts, setCategoriesWithProducts] = useState<
+    ICategoryWhitProduct | []
+  >([]);
   const [products, setProducts] = useState<CartProduct[]>(initialState);
 
   //carregar o cart armazenado nos cookies a cada mudança no carproduct
@@ -64,6 +82,14 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     Cookies.set("cart", JSON.stringify(products));
   }, [products]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch("/api/getCategoryWhitProducts");
+      const data = await response.json();
+      setCategoriesWithProducts(data);
+    };
+    fetchData();
+  }, []);
   //anteriormente se usava useMemo porem como só tem um estado que  possa ser alterado não há necessidade
   const subTotalPrice = products.reduce((acc, product) => {
     return acc + Number(product.price) * product.quantity;
@@ -86,7 +112,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const decreaseProductQuantity: ICartContext["decreaseProductQuantity"] = (
-    productId: string,
+    productId: string
   ) => {
     return setProducts((prev) =>
       prev.map((cartProduct) => {
@@ -100,12 +126,12 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           };
         }
         return cartProduct;
-      }),
+      })
     );
   };
 
   const increaseProductQuantity: ICartContext["increaseProductQuantity"] = (
-    productId: string,
+    productId: string
   ) => {
     return setProducts((prev) =>
       prev.map((cartProduct) => {
@@ -116,15 +142,15 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           };
         }
         return cartProduct;
-      }),
+      })
     );
   };
 
   const removeProductFronCart: ICartContext["removeProductFronCart"] = (
-    productId: string,
+    productId: string
   ) => {
     return setProducts((prev) =>
-      prev.filter((product) => product.id !== productId),
+      prev.filter((product) => product.id !== productId)
     );
   };
 
@@ -139,7 +165,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
     //VERIFICAR SE  O PRODUTO JA ESTA NO CARRINHO
     const isProductAlreadyOnCart = products.some(
-      (cartProduct) => cartProduct.id === product.id,
+      (cartProduct) => cartProduct.id === product.id
     );
 
     //SE ELE ESTIVER AUMENTAR SUA QUANTIDADE
@@ -154,7 +180,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           }
 
           return cartProduct;
-        }),
+        })
       );
     }
 
@@ -166,6 +192,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     <CartContext.Provider
       value={{
         products,
+        categoriesWithProducts,
         subTotalPrice,
         totalPrice,
         totalDiscounts,

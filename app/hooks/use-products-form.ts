@@ -1,14 +1,14 @@
 import { useState,ChangeEvent } from "react";
-import { ICrudProductListProps, NewProduct, } from "../dashboard/types/products-interface";
 import { Decimal } from "decimal.js";
 import { newProductEmpty } from "../dto/new-product-dto";
 import { NextResponse } from "next/server";
+import { IDashboardProductsProps } from "../dashboard/types/types-dashoboard";
 
 
-const useProductForm = ({products,category,restaurant}: ICrudProductListProps) =>{
+const useProductForm = ({ restaurant,  category}: IDashboardProductsProps) =>{
 const [isSubmitLoading, setIsSubmiLoading] = useState(false);
 const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
-const [currentProducts, setCurrentProducts] = useState(products);
+const [currentProducts, setCurrentProducts] = useState(category.products );
 const [imageUrl, setImageUrl] = useState<File | null>(null);
 const [localImageUrl, setLocalImageUrl] = useState<string>("");
 const [openModal, setOpenModal] = useState(false);

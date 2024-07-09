@@ -8,12 +8,13 @@ interface RestaurantImageProps {
 
 const RestaurantImage = ({ restaurant }: RestaurantImageProps) => {
   return (
-    <div className="relative h-[250px] w-full lg:h-[380px] lg:w-[750px] xl:h-[480px] xl:w-[1280px]">
+    <div className="relative   h-[250px] md:h-[420px] w-full  lg:w-[750px] xl:h-[480px] xl:w-[1280px]">
       <Image
         src={restaurant.imageUrl}
         alt={restaurant.name}
         fill
-        className="object-cover"
+        className="lg:object-contain sm:object-cover md:object-cover xl:object-contain object-contain "
+        sizes="(max-width: 480px) 90vw, 32px"
       />
     </div>
   );
