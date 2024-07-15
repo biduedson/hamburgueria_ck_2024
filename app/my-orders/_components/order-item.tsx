@@ -15,7 +15,7 @@ import { useContext } from "react";
 interface OrderItemProps {
   order: Prisma.OrderGetPayload<{
     include: {
-      restaurant: true;
+      Restaurant: true;
       products: {
         include: {
           product: true;
@@ -49,7 +49,7 @@ const OrderItem = ({ order }: OrderItemProps) => {
       addProductToCArt({
         product: {
           ...orderProduct.product,
-          restaurant: order.restaurant,
+          Restaurant: order.Restaurant,
           quantity: orderProduct.quantity,
         },
       });
@@ -71,11 +71,11 @@ const OrderItem = ({ order }: OrderItemProps) => {
         <div className="flex items-center justify-between pt-3">
           <div className="flex items-center gap-2">
             <Avatar className="h-6 w-6">
-              <AvatarImage src={order.restaurant.imageUrl} />
+              <AvatarImage src={order.Restaurant?.imageUrl} />
             </Avatar>
 
             <span className="text-sm font-semibold">
-              {order.restaurant.name}
+              {order.Restaurant?.name}
             </span>
           </div>
 
@@ -85,7 +85,7 @@ const OrderItem = ({ order }: OrderItemProps) => {
             className="h-5 w-5 text-black"
             asChild
           >
-            <Link href="/restaurant">
+            <Link href="/">
               <ChevronRightIcon />
             </Link>
           </Button>

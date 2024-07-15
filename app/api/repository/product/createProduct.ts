@@ -1,10 +1,10 @@
 import { Product } from "@prisma/client";
-import { IcreateProducRepository } from "../../interface/product/create-products";
+import { INewProduct, IcreateProducRepository } from "../../interface/product/create-products";
 import { db } from "@/app/_lib/prisma";
 
 
 class CreateProductRepository implements IcreateProducRepository{
-    async createProduct(product: Product): Promise<Product> {
+    async createProduct(product: INewProduct): Promise<Product> {
 
         const newProduct = await db.product.create({
             data: {
@@ -18,7 +18,7 @@ class CreateProductRepository implements IcreateProducRepository{
             },
             include: {
                 category: true,
-                restaurant: true,
+                Restaurant: true,
               }, 
           });
           return newProduct

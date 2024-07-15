@@ -35,6 +35,7 @@ import {
 } from "./ui/alert-dialog";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Restaurant } from "@prisma/client";
 
 interface IHeaderProps {
   isSearch: boolean;
@@ -42,9 +43,7 @@ interface IHeaderProps {
 
 const Header = ({ isSearch }: IHeaderProps) => {
   const { data } = useSession();
-  const [idRestaurant, setIdRestaurant] = useState<string | null | undefined>(
-    null
-  );
+  const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
   const [loading, setLoading] = useState(true);
 
   const router = useRouter();
@@ -68,7 +67,7 @@ const Header = ({ isSearch }: IHeaderProps) => {
           const result = await response.json();
           if (result) {
             console.log("Restaurant ID fetched:", result);
-            setIdRestaurant(result);
+            setRestaurant(result);
           } else {
             console.log("No restaurant ID found.");
           }
@@ -84,6 +83,8 @@ const Header = ({ isSearch }: IHeaderProps) => {
 
     fetchRestaurant();
   }, [data]);
+
+  console.log(restaurant?.id, data?.user.id);
 
   return (
     <>
@@ -199,7 +200,7 @@ const Header = ({ isSearch }: IHeaderProps) => {
                         Loading..
                       </span>
                     </div>
-                  ) : idRestaurant ? (
+                  ) : restaurant ? (
                     <Button
                       variant="ghost"
                       className="w-full justify-start space-x-3 rounded-full text-sm font-normal"

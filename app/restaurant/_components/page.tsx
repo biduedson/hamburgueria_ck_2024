@@ -6,7 +6,7 @@ import { db } from "../../_lib/prisma";
 
 const ProductsPage = async () => {
   const session = await getServerSession(authOptions);
-  const userFavoriteProducts = await db.userFavoriteProducts.findMany({
+  const userFavoriteProducts = await db.userFavoriteProducts.findFirst({
     where: {
       userId: session?.user.id,
     },

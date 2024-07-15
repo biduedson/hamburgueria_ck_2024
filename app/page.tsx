@@ -15,7 +15,7 @@ import { Separator } from "@/app/_components/ui/separator";
 import CategoryList from "./_components/categoryList";
 
 const RestaurantPage = async () => {
-  const [restaurant] = await db.restaurant.findMany({
+  const restaurant = await db.restaurant.findFirst({
     include: {
       categories: {
         orderBy: {
@@ -24,7 +24,7 @@ const RestaurantPage = async () => {
         include: {
           products: {
             include: {
-              restaurant: true,
+              Restaurant: true,
               category: true,
             },
           },
@@ -33,19 +33,15 @@ const RestaurantPage = async () => {
       products: {
         take: 10,
         include: {
+          Restaurant: true,
           category: true,
-          restaurant: true,
         },
       },
     },
   });
-  console.log("AQUI");
 
   if (!restaurant) {
     return notFound();
-  }
-  for (let category of restaurant.categories) {
-    console.log(category.name);
   }
   const session = await getServerSession(authOptions);
   const userFavoriteProducts = await db.userFavoriteProducts.findMany({

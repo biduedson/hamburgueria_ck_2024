@@ -10,18 +10,14 @@ export async function GET(){
     if(!data){
         return NextResponse.json({message: "Usuário não autenticado." }, {status: 401})
     }
-    const [idRestaurant] = await db.restaurant.findMany({
+    const [restaurant] = await db.restaurant.findMany({
         where: {
           ownerId: data.user.id,
         },
-        select:{
-            id:true
-        }
+        
         
       });
 
-      if(!idRestaurant){
-        return NextResponse.json({message: "Restaurante não encontrado." }, {status: 401})
-    }
-     return NextResponse.json(idRestaurant.id)
+      
+     return NextResponse.json(restaurant)
 }

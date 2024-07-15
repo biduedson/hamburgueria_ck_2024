@@ -6,7 +6,7 @@ import { Card, CardContent } from "./ui/card";
 import { formatCurrency } from "../_helpers/price";
 import { Separator } from "./ui/separator";
 import { Button } from "./ui/button";
-import { OrderStatus } from "@prisma/client";
+import { OrderStatus, Prisma } from "@prisma/client";
 import { createOrder } from "../_actions/order";
 import { useSession } from "next-auth/react";
 import { Loader2 } from "lucide-react";
@@ -21,7 +21,8 @@ import {
   AlertDialogTitle,
 } from "./ui/alert-dialog";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
+import { db } from "../_lib/prisma";
 
 interface CartProps {
   setIsOpen: (isOpen: boolean) => void;
@@ -37,7 +38,14 @@ const Cart = ({ setIsOpen }: CartProps) => {
 
   const handleFinishOrderClick = async () => {
     if (!data?.user) return;
-    const restaurant = products[0].restaurant;
+    const restaurant = products[0].Restaurant;
+
+    if (!restaurant) {
+      return notFound();
+    }
+    if (!products) {
+      return notFound();
+    }
 
     try {
       setIsSubmiLoading(true);
@@ -48,7 +56,7 @@ const Cart = ({ setIsOpen }: CartProps) => {
         totalPrice,
         deliveryFee: restaurant.deliveryFee,
         deliveryTimeMinutes: restaurant.deliveryTimeMinutes,
-        restaurant: {
+        Restaurant: {
           connect: { id: restaurant.id },
         },
         status: OrderStatus.CONFIRMED,
@@ -81,6 +89,15 @@ const Cart = ({ setIsOpen }: CartProps) => {
     } finally {
       setIsSubmiLoading(false);
     }
+
+    console.log(
+      restaurant.deliveryFee,
+      restaurant,
+      products,
+      totalPrice,
+      subTotalPrice,
+      totalDiscounts
+    );
     //window.location.href = `https://wa.me/+5511934867766?text= gostaria de pedir os seguintos productos: \n ${products.map((product) => `${product.name} \n \n `)} da  o total de : ${formatCurrency(Number(totalPrice))}`;
   };
 
@@ -115,11 +132,11 @@ const Cart = ({ setIsOpen }: CartProps) => {
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-muted-foreground">Entrega</span>
 
-                    {Number(products?.[0].restaurant.deliveryFee) === 0 ? (
+                    {Number(products?.[0].Restaurant?.deliveryFee) === 0 ? (
                       <span className="uppercase text-primary">Grátis</span>
                     ) : (
                       formatCurrency(
-                        Number(products?.[0].restaurant.deliveryFee)
+                        Number(products?.[0].Restaurant?.deliveryFee)
                       )
                     )}
                   </div>

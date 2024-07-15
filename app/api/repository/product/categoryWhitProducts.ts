@@ -8,7 +8,7 @@ class CategoryWhitProductsRepository implements IGetCategoriyWhitProductsReposit
               products:{
                 include:{
                   category:true,
-                  restaurant:true
+                  Restaurant:true
                 }
               }}
             })

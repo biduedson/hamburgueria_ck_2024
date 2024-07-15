@@ -43,6 +43,7 @@ class CreateProductController implements IcreateProductController{
                 }
             }
             const newProduct = await this.createProductRepository.createProduct(req.body!);
+            console.log(req.body)
             return {
                 statusCode:201,
                 body:newProduct

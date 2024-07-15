@@ -16,19 +16,23 @@ import ProductList from "@/app/_components/productList";
 interface ProductDetailsProps {
   product: Prisma.ProductGetPayload<{
     include: {
-      restaurant: true;
+      Restaurant: true;
     };
   }>;
-  complementaryProducts: Prisma.ProductGetPayload<{
+  complementaryProducts: Prisma.ProductGetPayload<{}>[];
+
+  restaurant: Prisma.RestaurantGetPayload<{
     include: {
-      restaurant: true;
+      categories: true;
+      products: true;
     };
-  }>[];
+  }>;
 }
 
 const ProductDetails = ({
   product,
   complementaryProducts,
+  restaurant,
 }: ProductDetailsProps) => {
   const [quantity, setQuantity] = useState(1);
   const handleIncreaseQuantityClick = () =>
@@ -39,7 +43,12 @@ const ProductDetails = ({
       if (currentState === 1) return 1;
       return currentState - 1;
     });
-
+  if (!product) {
+    return <h1>Erro ao consultar produto</h1>;
+  }
+  if (!restaurant) {
+    return <h1>Erro ao consultar restaurante</h1>;
+  }
   return (
     <>
       <div>
@@ -49,14 +58,14 @@ const ProductDetails = ({
             <div className="flex items-center gap-[0.375rem] px-5">
               <div className="relative h-6 w-6">
                 <Image
-                  src={product.restaurant.imageUrl}
-                  alt={product.restaurant.name}
+                  src={restaurant.imageUrl}
+                  alt={restaurant.name}
                   fill
                   className="rounded-full object-cover"
                 />
               </div>
               <span className="text-xs text-muted-foreground">
-                {product.restaurant.name}
+                {restaurant.name}
               </span>
             </div>
 
@@ -106,7 +115,7 @@ const ProductDetails = ({
             {/* DADOS DA ENTREGA */}
 
             <div className="px-5">
-              <Deliveryinfo restaurant={product.restaurant} />
+              <Deliveryinfo restaurant={restaurant} />
             </div>
 
             <div className="mt-6 space-y-3 px-5">

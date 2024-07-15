@@ -7,6 +7,7 @@ import { createProductController } from "../controller/product/create-product-co
 
 export async function POST(req:Request){
   const data = await req.json();
+  
   const {body, statusCode} = await createProductController.handle({body: data!})
 
   return NextResponse.json( body , {status: statusCode})
@@ -49,7 +50,7 @@ export async function POST(req:Request){
             },
             include: {
                 category: true,
-                restaurant: true,
+                Restaurant: true,
               }, 
           });
           console.log(newProduct)

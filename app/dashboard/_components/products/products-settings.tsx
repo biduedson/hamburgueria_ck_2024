@@ -4,13 +4,20 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/app/_components/ui/tabs";
-import { IDashboardProductsProps } from "../../types/types-dashoboard";
 import CrudProductsList from "../crud-products-list";
+import { IDashboardProps } from "../../types/types-dashoboard";
 
 const ProductSettingscomponents = ({
   restaurant,
   categories,
-}: IDashboardProductsProps) => {
+}: IDashboardProps) => {
+  if (!restaurant) {
+    return (
+      <h1 className="px-5 py-6 text-sm font-bold lg:px-12 xl:px-24 2xl:px-28">
+        Voce não tem restaurante cadastrado.
+      </h1>
+    );
+  }
   if (!categories) {
     return (
       <h1 className="px-5 py-6 text-sm font-bold lg:px-12 xl:px-24 2xl:px-28">
@@ -22,7 +29,7 @@ const ProductSettingscomponents = ({
     <Tabs defaultValue="account" className="item center flex w-full flex-col ">
       <TabsList className="flex  h-[50px]  w-full gap-2 bg-[#E5E5E5] px-3 md:px-0">
         <h1 className="lg:text-[14px] font-semibold  text-black smartphoneSm:text-[12px]">
-          Selecione a categoria.
+          Selecione o produto.
         </h1>
         {categories.map((category) => (
           <TabsTrigger

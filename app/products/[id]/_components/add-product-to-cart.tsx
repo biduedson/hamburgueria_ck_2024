@@ -26,7 +26,7 @@ import { useContext, useState } from "react";
 interface AddProductToCartProps {
   product: Prisma.ProductGetPayload<{
     include: {
-      restaurant: true;
+      Restaurant: true;
     };
   }>;
   quantity: number;

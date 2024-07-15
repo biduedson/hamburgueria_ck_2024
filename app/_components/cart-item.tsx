@@ -23,7 +23,6 @@ const CartItem = ({ cartProduct }: CartItemProps) => {
     increaseProductQuantity(cartProduct.id);
 
   const handleRemoveClick = () => removeProductFronCart(cartProduct.id);
-  console.log("CartItem");
   return (
     <div className="flex items-center justify-between">
       {/*IMAGEM E INFO*/}
@@ -42,13 +41,13 @@ const CartItem = ({ cartProduct }: CartItemProps) => {
           <div className="flex items-center gap-1">
             <h4 className="text-sm font-semibold">
               {formatCurrency(
-                calculateProductTotalPrice(cartProduct) * cartProduct.quantity,
+                calculateProductTotalPrice(cartProduct) * cartProduct.quantity
               )}
             </h4>
             {cartProduct.discountPercentage > 0 && (
               <span className="text-xs text-muted-foreground line-through">
                 {formatCurrency(
-                  Number(cartProduct.price) * cartProduct.quantity,
+                  Number(cartProduct.price) * cartProduct.quantity
                 )}
               </span>
             )}

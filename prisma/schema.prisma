@@ -77,12 +77,13 @@ model Restaurant {
 }
 
 model Category {
-  id          String       @id @default(uuid())
-  name        String
-  imageUrl    String
-  restaurants Restaurant[]
-  products    Product[]
-  createdAt   DateTime     @default(now())
+  id           String      @id @default(uuid())
+  name         String
+  imageUrl     String
+  products     Product[]
+  createdAt    DateTime    @default(now())
+  Restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
+  restaurantId String?
 
   @@map("categories")
 }
@@ -94,13 +95,13 @@ model Product {
   imageUrl           String
   price              Decimal                @db.Decimal(10, 2)
   discountPercentage Int                    @default(0)
-  restaurantId       String
-  restaurant         Restaurant             @relation(fields: [restaurantId], references: [id])
   categoryId         String
   category           Category               @relation(fields: [categoryId], references: [id])
   createdAt          DateTime               @default(now())
   orderProducts      OrderProduct[]
   usersWhoFavorited  UserFavoriteProducts[]
+  Restaurant         Restaurant?            @relation(fields: [restaurantId], references: [id])
+  restaurantId       String?
 
   @@map("products")
 }
@@ -131,8 +132,6 @@ model Order {
   userId              String
   user                User           @relation(fields: [userId], references: [id])
   products            OrderProduct[]
-  restaurantId        String
-  restaurant          Restaurant     @relation(fields: [restaurantId], references: [id])
   deliveryFee         Decimal        @db.Decimal(10, 2)
   deliveryTimeMinutes Int
   subTotalPrice       Decimal        @db.Decimal(10, 2)
@@ -140,6 +139,8 @@ model Order {
   totalDiscounts      Decimal        @db.Decimal(10, 2)
   createdAt           DateTime       @default(now())
   status              OrderStatus
+  Restaurant          Restaurant?    @relation(fields: [restaurantId], references: [id])
+  restaurantId        String?
 
   @@map("orders")
 }

@@ -1,10 +1,16 @@
 import { BikeIcon, TimerIcon } from "lucide-react";
 import { Card } from "./ui/card";
 import { formatCurrency } from "../_helpers/price";
-import { Restaurant } from "@prisma/client";
+import { Prisma } from "@prisma/client";
+import { IRestaurant } from "../dashboard/types/types-dashoboard";
 
 interface DeliveryinfoProps {
-  restaurant: Pick<Restaurant, "deliveryFee" | "deliveryTimeMinutes">;
+  restaurant: Prisma.RestaurantGetPayload<{
+    include: {
+      categories: true;
+      products: true;
+    };
+  }>;
 }
 
 const Deliveryinfo = ({ restaurant }: DeliveryinfoProps) => {

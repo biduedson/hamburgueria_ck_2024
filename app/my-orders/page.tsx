@@ -16,7 +16,7 @@ const MyOrdersPage = async () => {
       userId: session.user.id,
     },
     include: {
-      restaurant: true,
+      Restaurant: true,
       products: {
         include: {
           product: true,

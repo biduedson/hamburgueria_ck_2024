@@ -13,30 +13,17 @@ const MyRestaurantSettings = async ({}) => {
     return notFound();
   }
 
-  const restaurant = await db.restaurant.findFirst({
+  const restaurant = await db.restaurant.findFirst({});
+  if (data?.user.id !== restaurant?.ownerId) {
+    return notFound();
+  }
+
+  const categories = await db.category.findMany({
     include: {
-      categories: {
-        include: {
-          products: {
-            include: {
-              category: true,
-              restaurant: true,
-            },
-          },
-        },
-      },
       products: {
         include: {
-          category: {
-            include: {
-              products: {
-                include: {
-                  category: true,
-                  restaurant: true,
-                },
-              },
-            },
-          },
+          category: true,
+          Restaurant: true,
         },
       },
     },
@@ -50,22 +37,14 @@ const MyRestaurantSettings = async ({}) => {
     );
   }
 
-  const categories = await db.category.findMany({
-    include: {
-      products: {
-        include: {
-          category: true,
-          restaurant: true,
-        },
-      },
-    },
-  });
-  const products = await db.product.findMany({
-    include: {
-      category: true,
-      restaurant: true,
-    },
-  });
+  if (!categories) {
+    return (
+      <h1 className="px-5 py-6 text-sm font-bold lg:px-12 xl:px-24 2xl:px-28">
+        Voce não tem categoriase cadastradas no restaurante.
+      </h1>
+    );
+  }
+
   return (
     <div className="relative  h-full  w-full flex-col md:flex md:flex-row ">
       <div className="w-full md:hidden">
@@ -75,7 +54,6 @@ const MyRestaurantSettings = async ({}) => {
       <RestaurantSettingsComponent
         restaurant={restaurant}
         categories={categories}
-        products={products}
         key="crud-product"
       />
     </div>

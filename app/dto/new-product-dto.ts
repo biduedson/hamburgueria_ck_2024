@@ -1,4 +1,5 @@
 import Decimal from "decimal.js";
+import { IResponse } from "../dashboard/types/types-dashoboard";
 
 interface INewProduct {
   name: string;
@@ -10,10 +11,7 @@ interface INewProduct {
   categoryId: string;
 }
 
-interface IResponse {
-  messageError?: string;
-  emptyError: boolean;
-}
+
 export const newProductEmpty = (newProduct: INewProduct): IResponse => {
   for (const key in newProduct) {
     if (newProduct.hasOwnProperty(key)) {

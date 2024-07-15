@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 
-import { IDashboardProductsProps } from "../types/types-dashoboard";
 import Header from "@/app/_components/header";
 import { Button } from "@/app/_components/ui/button";
 import {
@@ -13,19 +12,20 @@ import {
 } from "lucide-react";
 import { ReactElement, useState } from "react";
 import ProductSettingscomponents from "./products/products-settings";
+import CategoriesSettingsComponent from "./categories/categories-settings-components";
+import { IDashboardProps } from "../types/types-dashoboard";
 
 const RestaurantSettingsComponent = ({
   restaurant,
   categories,
-}: IDashboardProductsProps) => {
+  category,
+}: IDashboardProps) => {
   const [menuComponent, setMenucomponent] = useState<ReactElement>(
     <h1 className="w-full flex justify-center">
       Selecione no menu ao lado o que deseja modificar.
     </h1>
   );
   const handleMenuClick = (component: ReactElement) => {
-    console.log("Menu item clicked:", component);
-
     setMenucomponent(component);
   };
   if (!restaurant) {
@@ -78,7 +78,7 @@ const RestaurantSettingsComponent = ({
             }
           >
             <HomeIcon width={16} hanging={16} />
-            Home
+            Pedidos
           </Button>
           <Button
             className="flex h-[41px] w-full justify-start  gap-1  rounded-[4px] pl-12 text-start text-xs font-bold  hover:bg-[#FEAF00] hover:text-[black]"
@@ -87,6 +87,7 @@ const RestaurantSettingsComponent = ({
                 <ProductSettingscomponents
                   categories={categories}
                   restaurant={restaurant}
+                  category={category}
                 />
               )
             }
@@ -94,7 +95,18 @@ const RestaurantSettingsComponent = ({
             <ShoppingBasket width={16} hanging={16} />
             Produtos
           </Button>
-          <Button className="flex h-[41px] w-full justify-start gap-1 rounded-[4px] pl-12 text-start text-xs font-bold  hover:bg-[#FEAF00] hover:text-[black]">
+          <Button
+            className="flex h-[41px] w-full justify-start gap-1 rounded-[4px] pl-12 text-start text-xs font-bold  hover:bg-[#FEAF00] hover:text-[black]"
+            onClick={() =>
+              handleMenuClick(
+                <CategoriesSettingsComponent
+                  categories={categories}
+                  restaurant={restaurant}
+                  category={category}
+                />
+              )
+            }
+          >
             <GalleryHorizontal width={16} hanging={16} />
             Categorias
           </Button>

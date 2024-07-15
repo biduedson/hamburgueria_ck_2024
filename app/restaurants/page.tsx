@@ -23,7 +23,7 @@ const RestaurantPage = async () => {
         include: {
           products: {
             include: {
-              restaurant: {
+              Restaurant: {
                 select: {
                   name: true,
                 },
@@ -35,7 +35,7 @@ const RestaurantPage = async () => {
       products: {
         take: 10,
         include: {
-          restaurant: {
+          Restaurant: {
             select: {
               name: true,
             },

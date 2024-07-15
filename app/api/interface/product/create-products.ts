@@ -10,7 +10,6 @@ export interface INewProduct {
     discountPercentage: number;
     restaurantId: string;
     categoryId: string;
-    createdAt?: Date;
 
   }
 

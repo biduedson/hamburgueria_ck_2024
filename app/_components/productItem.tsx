@@ -8,7 +8,7 @@ import { cn } from "../_lib/utils";
 interface ProductsItemProps {
   product: Prisma.ProductGetPayload<{
     include: {
-      restaurant: true;
+      Restaurant: true;
       category: true;
     };
   }>;
@@ -59,7 +59,7 @@ const ProductItem = ({ product, className }: ProductsItemProps) => {
           </div>
 
           <span className="block text-xs text-muted-foreground">
-            {product.restaurant.name}
+            {product.Restaurant?.name}
           </span>
         </div>
       </div>

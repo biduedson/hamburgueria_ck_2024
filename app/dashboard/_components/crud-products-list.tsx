@@ -16,13 +16,13 @@ import ProductForm from "./form/product-form";
 import AlertDialagDeleteProduct from "./alert-dialogs/alert-dialog-delete-product";
 import AlertDialogError from "./alert-dialogs/aleert-dialog-error";
 import useProductForm from "@/app/hooks/use-products-form";
-import { IDashboardProductsProps } from "../types/types-dashoboard";
+import { IDashboardProps } from "../types/types-dashoboard";
 
 const CrudProductsList = ({
   restaurant,
   categories,
   category,
-}: IDashboardProductsProps) => {
+}: IDashboardProps) => {
   const {
     isSubmitLoading,
     isConfirmDialogOpen,
@@ -34,6 +34,7 @@ const CrudProductsList = ({
     dialogErrorOpen,
     emptyErrorMessage,
     newProduct,
+    setNewProduct,
     price,
     setIsConfirmDialogOpen,
     handleInputChange,
@@ -48,7 +49,6 @@ const CrudProductsList = ({
     resetNewProduct,
     setEmptyErrorMessage,
     setImageUrl,
-    setNewProduct,
     setActiveBtn,
     setOpenModal,
     setBtnOpen,
@@ -58,7 +58,20 @@ const CrudProductsList = ({
     categories,
     category,
   });
-
+  if (!restaurant) {
+    return (
+      <h1 className="px-5 py-6 text-sm font-bold lg:px-12 xl:px-24 2xl:px-28">
+        Voce não tem restaurante cadastrado.
+      </h1>
+    );
+  }
+  if (!category) {
+    return (
+      <h1 className="px-5 py-6 text-sm font-bold lg:px-12 xl:px-24 2xl:px-28">
+        Voce não tem categorias cadastradas.
+      </h1>
+    );
+  }
   return (
     <>
       <div className="flex w-full   flex-wrap items-center justify-center gap-2 overflow-y-auto bg-[#E5E5E5] lg:flex lg:flex-col">
@@ -73,7 +86,7 @@ const CrudProductsList = ({
                   setEmptyErrorMessage("");
                 }}
               >
-                Adicinar Produto
+                Adicionar Produto
               </Button>
             </div>
           </div>

@@ -4,7 +4,7 @@ import ProductItem from "./productItem";
 interface ProductListProps {
   products: Prisma.ProductGetPayload<{
     include: {
-      restaurant: true;
+      Restaurant: true;
       category: true;
     };
   }>[];

@@ -7,7 +7,7 @@ export interface ICategoryWhitProduct{
         products: {
           include: {
             category: true;
-            restaurant: true;
+            Restaurant: true;
           };
         };
       };

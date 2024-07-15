@@ -1,11 +1,20 @@
+"use client"
 import { useState,ChangeEvent } from "react";
 import { Decimal } from "decimal.js";
 import { newProductEmpty } from "../dto/new-product-dto";
 import { NextResponse } from "next/server";
-import { IDashboardProductsProps } from "../dashboard/types/types-dashoboard";
+import { IDashboardProps } from "../dashboard/types/types-dashoboard";
 
-
-const useProductForm = ({ restaurant,  category}: IDashboardProductsProps) =>{
+interface NewProduct {
+  name: string;
+  description: string;
+  imageUrl: string;
+  price: Decimal;
+  discountPercentage: number;
+  restaurantId: string;
+  categoryId: string;
+}
+const useProductForm = ({ restaurant,  category}: IDashboardProps) =>{
 const [isSubmitLoading, setIsSubmiLoading] = useState(false);
 const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
 const [currentProducts, setCurrentProducts] = useState(category.products );
@@ -40,6 +49,7 @@ const resetNewProduct = (restaurantId: string, categoryId: string) => {
     restaurantId: String(restaurantId),
     categoryId: String(categoryId),
   });
+  setLocalImageUrl("")
 };
 
 const handleInputChange = (
@@ -324,6 +334,7 @@ return {
     dialogErrorOpen,
     emptyErrorMessage,
     newProduct,
+    setNewProduct,
     price,
     setIsConfirmDialogOpen,
     handleInputChange,

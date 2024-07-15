@@ -20,11 +20,19 @@ const ProductPage = async ({ params: { id } }: ProductPageProps) => {
       id,
     },
     include: {
-      restaurant: true,
+      Restaurant: true,
     },
   });
-
+  const restaurant = await db.restaurant.findFirst({
+    include: {
+      categories: true,
+      products: true,
+    },
+  });
   if (!product) {
+    return notFound();
+  }
+  if (!restaurant) {
     return notFound();
   }
   const bebidas = await db.product.findMany({
@@ -32,12 +40,12 @@ const ProductPage = async ({ params: { id } }: ProductPageProps) => {
       category: {
         name: "Bebidas",
       },
-      restaurant: {
-        id: product?.restaurant.id,
+      Restaurant: {
+        id: restaurant.id,
       },
     },
     include: {
-      restaurant: true,
+      Restaurant: true,
     },
   });
 
@@ -53,7 +61,11 @@ const ProductPage = async ({ params: { id } }: ProductPageProps) => {
           <ProductImage product={product} />
 
           {/* TITULO E PREÇO */}
-          <ProductDetails product={product} complementaryProducts={bebidas} />
+          <ProductDetails
+            product={product}
+            complementaryProducts={bebidas}
+            restaurant={restaurant}
+          />
         </div>
         <div className="mb-2 mt-6 hidden flex-col space-y-3 px-5 lg:flex lg:px-0">
           <h3 className="font-semibold">Sucos</h3>

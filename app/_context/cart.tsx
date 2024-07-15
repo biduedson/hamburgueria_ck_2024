@@ -9,7 +9,7 @@ import { db } from "../_lib/prisma";
 export interface CartProduct
   extends Prisma.ProductGetPayload<{
     include: {
-      restaurant: {
+      Restaurant: {
         select: {
           id: true;
           deliveryFee: true;
@@ -27,7 +27,7 @@ export interface ICategoryWhitProduct {
       products: {
         include: {
           category: true;
-          restaurant: true;
+          Restaurant: true;
         };
       };
     };
@@ -98,14 +98,14 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const totalPrice =
     products.reduce((acc, product) => {
       return acc + calculateProductTotalPrice(product) * product.quantity;
-    }, 0) + Number(products?.[0]?.restaurant?.deliveryFee);
+    }, 0) + Number(products?.[0]?.Restaurant?.deliveryFee);
 
   const totalQuantity = products.reduce((acc, product) => {
     return acc + product.quantity;
   }, 0);
 
   const totalDiscounts =
-    subTotalPrice - totalPrice + Number(products?.[0]?.restaurant?.deliveryFee);
+    subTotalPrice - totalPrice + Number(products?.[0]?.Restaurant?.deliveryFee);
 
   const clearCart = () => {
     return setProducts([]);
