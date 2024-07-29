@@ -12,20 +12,26 @@ import {
 import Image from "next/image";
 import AlertDialogError from "../alert-dialogs/aleert-dialog-error";
 import { EditIcon, TrashIcon } from "lucide-react";
-import { IDashboardProps } from "../../types/types-dashoboard";
+import { ICategory, IDashboardProps } from "../../types/types-dashoboard";
 import useCategoriesForm from "@/app/hooks/use-categories-form";
 import AlertDialagDeleteCategory from "../alert-dialogs/alert-dialog-delete-category";
 import CategorytEditItemCard from "../item-card/category-edit-item-card";
 import CategoryForm from "../form/category-form";
+import { useEffect, useState } from "react";
 const CategoriesSettingsComponent = ({
   categories,
   restaurant,
   category,
+  orderStatus,
+  orders,
 }: IDashboardProps) => {
+  const [dataCategories, setDataCategories] = useState<ICategory[] | []>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const {
     isSubmitLoading,
     isConfirmDialogOpen,
     currentCategories,
+    setCurrentCategories,
     imageUrl,
     localImageUrl,
     openModal,
@@ -49,13 +55,43 @@ const CategoriesSettingsComponent = ({
     setOpenModal,
     setBtnOpen,
     setLocalImageUrl,
-  } = useCategoriesForm({ categories, restaurant, category });
+  } = useCategoriesForm({
+    categories,
+    restaurant,
+    category,
+    orderStatus,
+    orders,
+  });
+  useEffect(() => {
+    const fetchCategoriesWhitProducts = async () => {
+      try {
+        const response = await fetch("/api/getCategories");
+        const data = await response.json();
+        setDataCategories(data);
+        setCurrentCategories(data);
+      } catch (error) {
+        console.log("Erro ao buscar produtos", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCategoriesWhitProducts();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-full">
+        <div className="loader">Carregando...</div>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="flex w-full   flex-wrap items-center justify-center gap-2 overflow-y-auto bg-[#E5E5E5] lg:flex lg:flex-col px-3">
         <div className="hidden  w-full lg:block">
           <div className="flex w-full  justify-between py-4 ">
-            <h1 className="text-md font-bold">Produtos</h1>
+            <h1 className="text-md font-bold">Categorias</h1>
             <div className="py-2 ">
               <Button
                 className="rounded-[4px] bg-customRed hover:bg-[#FEAF00] hover:text-black"
@@ -87,7 +123,7 @@ const CategoriesSettingsComponent = ({
                         src={category.imageUrl}
                         alt={category.name}
                         fill
-                        className="rounded-sm object-contain"
+                        className="rounded-sm object-cover"
                         sizes="(max-width: 60px) 100vw, (max-width: 120px) 50vw, 33vw"
                       />
                     </div>
@@ -173,7 +209,7 @@ const CategoriesSettingsComponent = ({
           handleInputChange={handleInputChange}
           handleImageChange={handleImageChange}
           localImageUrl={localImageUrl}
-          addCategory={() => addCategory(restaurant.id)}
+          addCategory={async () => addCategory(restaurant.id)}
           isSubmitLoading={isSubmitLoading}
           openModal={openModal}
         />

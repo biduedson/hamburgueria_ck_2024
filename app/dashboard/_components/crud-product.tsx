@@ -2,6 +2,7 @@ import { formatCurrency } from "@/app/_helpers/price";
 import { Prisma } from "@prisma/client";
 import { DeleteIcon, EditIcon } from "lucide-react";
 import Image from "next/image";
+import UpdateProductForm from "./form/update-product-form";
 
 interface ICrudProductsProps {
   product: Prisma.ProductGetPayload<{
@@ -56,6 +57,38 @@ const CrudProduct = ({ product }: ICrudProductsProps) => {
           </div>
         </td>
       </tr>
+      <UpdateProductForm
+        restaurantId={restaurant.id}
+        categoryId={category.id}
+        newProduct={newProduct}
+        setNewProduct={setNewProduct}
+        imageUrl={imageUrl}
+        activeBtn={activeBtn}
+        emptyErrorMessage={emptyErrorMessage}
+        handleCancelBtn={() => {
+          setEmptyErrorMessage("");
+          setImageUrl(null);
+          setActiveBtn((prevActiveBtn) => ({
+            ...prevActiveBtn,
+            newProductDto: false,
+            imageUrl: false,
+          }));
+          setOpenModal(!openModal);
+          setBtnOpen(false);
+          resetNewProduct(restaurant.id, category.id);
+          setPrice("");
+        }}
+        handleInputChange={handleInputChange}
+        handlePriceChange={handlePriceChange}
+        handleFocus={handleFocus}
+        handleBlur={handleBlur}
+        handleImageChange={handleImageChange}
+        localImageUrl={localImageUrl}
+        price={price}
+        addProduct={() => addProduct(restaurant.id, category.id)}
+        isSubmitLoading={isSubmitLoading}
+        openModal={openModal}
+      />
     </>
   );
 };

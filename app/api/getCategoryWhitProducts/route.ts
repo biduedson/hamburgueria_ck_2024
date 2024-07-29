@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getCategoryWhitController } from "../controller/product/get-category-whit-products-controller";
+import { getCategoryWhitController } from "../controller/category/get-category-whit-products-controller";
 
 
 export async function GET(){

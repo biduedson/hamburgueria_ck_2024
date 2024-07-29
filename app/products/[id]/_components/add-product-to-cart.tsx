@@ -21,6 +21,7 @@ import {
 } from "@/app/_components/ui/sheet";
 import { CartContext } from "@/app/_context/cart";
 import { Prisma } from "@prisma/client";
+import { signIn, useSession } from "next-auth/react";
 import { useContext, useState } from "react";
 
 interface AddProductToCartProps {
@@ -33,6 +34,7 @@ interface AddProductToCartProps {
 }
 
 const AddProductToCart = ({ product, quantity }: AddProductToCartProps) => {
+  const { data } = useSession();
   const [isCArtOpen, setIsCartOpen] = useState(false);
   const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] =
     useState(false);
@@ -89,9 +91,18 @@ const AddProductToCart = ({ product, quantity }: AddProductToCartProps) => {
       </AlertDialog>
 
       <div className="lg:px0 mt-6 w-full px-5">
-        <Button className="w-full font-semibold" onClick={handleAddToCartClick}>
-          Adicionar a sacola
-        </Button>
+        {data?.user ? (
+          <Button
+            className="w-full font-semibold"
+            onClick={handleAddToCartClick}
+          >
+            Adicionar a sacola
+          </Button>
+        ) : (
+          <Button className="w-full font-semibold" onClick={() => signIn()}>
+            Faça login para adicionar produtos.
+          </Button>
+        )}
       </div>
     </>
   );

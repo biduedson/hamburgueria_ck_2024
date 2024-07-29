@@ -1,6 +1,16 @@
 "use client";
 import Decimal from "decimal.js";
 
+export interface INewProduct {
+  name: string;
+  description: string;
+  imageUrl: string;
+  price: Decimal;
+  discountPercentage: number;
+  restaurantId: string;
+  categoryId: string;
+}
+
 export interface IRestaurant {
   id: string;
   name: string;
@@ -99,8 +109,12 @@ export interface IDashboardProps {
     deliveryTimeMinutes: number;
     ownerId: string;
   };
-  category?: ICategory;
+  product?:IProduct;
+  category: ICategory;
   categories: ICategory[];
+  orders?: IOrder[];
+  orderStatus:OrderStatus
+
 }
 export interface ICategoryWithProducts {
   id: string;
@@ -126,7 +140,6 @@ export interface ICategoryWithProducts {
     createdAt: Date;
   }[];
 
-
 }
 
 export interface IResponse {
@@ -139,4 +152,27 @@ export interface NewCategory {
   imageUrl: string;
   restaurantId: string;
  
+}
+
+export interface IOrder {
+  id: string;
+  userId: string;
+  deliveryFee: Decimal;
+  deliveryTimeMinutes: number;
+  subTotalPrice: Decimal;
+  totalPrice: Decimal;
+  totalDiscounts: Decimal;
+  createdAt: Date;
+  status: string;
+  restaurantId: string | null;
+  Restaurant: IRestaurant | null;
+  products: IProduct[];
+}
+
+enum OrderStatus {
+  CONFIRMED,
+  CANCELED,
+  PREPARING,
+  DELIVERING,
+  COMPLETED
 }

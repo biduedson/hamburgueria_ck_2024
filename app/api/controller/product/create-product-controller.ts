@@ -5,6 +5,7 @@ import { IFindNewProductRepository } from "../../interface/product/find-product"
 import { createProductRepository } from "../../repository/product/createProduct";
 import { findProductRepository } from "../../repository/product/find-product";
 import { authUserSession } from "../../utils/auth";
+import { IAuth } from "../../interface/auth/auth";
 
 
 
@@ -16,10 +17,10 @@ class CreateProductController implements IcreateProductController{
         // eslint-disable-next-line no-unused-vars
         private readonly findProductRepository: IFindNewProductRepository,  
         // eslint-disable-next-line no-unused-vars
-        private readonly session : authUserSession
+        private readonly session : IAuth
     ) {}
     async handle(req:IHttpRequest<INewProduct>):Promise<IHttpResponse<Product>>{
-         const logged = await  this.session;
+         const logged =   this.session;
 
          if(!logged){
             return{

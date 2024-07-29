@@ -5,7 +5,7 @@ import { newCategoryEmpty } from "../dto/new-category-dto";
 
 
 
-const useCategoriesForm = ({categories,restaurant,category}:IDashboardProps) =>{
+const useCategoriesForm = ({restaurant, category, categories, orders, orderStatus}:IDashboardProps) =>{
 const [currentCategories, setCurrentCategories] = useState(categories)
 const [isSubmitLoading, setIsSubmiLoading] = useState(false);
 const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
@@ -96,6 +96,9 @@ const addCategory = async (restaurantId: string) => {
       }
   
       setCurrentCategories((prevCategories) => [...prevCategories, createdCategory]);
+     
+      //setCategories(createdCategory)
+      
   
       setActiveBtn({
         newCategoryDto: false,
@@ -111,6 +114,7 @@ const addCategory = async (restaurantId: string) => {
       
       btnAddTrue(false, false);
       console.log("Produto cadastrado com sucesso");
+      return createdCategory
     } catch (error) {
       return console.log("Erro interno do servidor");
     } finally {
@@ -119,12 +123,13 @@ const addCategory = async (restaurantId: string) => {
         newCategoryDto: false,
         imageUrl: false,
       });
+      
     }
   };
 
   const deleteCategory = async (id: string) => {
     try {
-      const data = await fetch(`/api/category/?id=${id}`, {
+      const data = await fetch(`/api/deleteCategory/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -230,6 +235,7 @@ return {
     isSubmitLoading,
     isConfirmDialogOpen,
     currentCategories,
+    setCurrentCategories,
     imageUrl,
     localImageUrl,
     openModal,

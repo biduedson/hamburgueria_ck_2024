@@ -14,11 +14,14 @@ import { ReactElement, useState } from "react";
 import ProductSettingscomponents from "./products/products-settings";
 import CategoriesSettingsComponent from "./categories/categories-settings-components";
 import { IDashboardProps } from "../types/types-dashoboard";
+import OrderSettingsComponent from "./orders/order-settings";
 
 const RestaurantSettingsComponent = ({
   restaurant,
   categories,
   category,
+  orders,
+  orderStatus,
 }: IDashboardProps) => {
   const [menuComponent, setMenucomponent] = useState<ReactElement>(
     <h1 className="w-full flex justify-center">
@@ -71,9 +74,10 @@ const RestaurantSettingsComponent = ({
             className="flex h-[41px] w-full justify-start gap-1  rounded-[4px]  pl-12 text-xs font-bold  hover:bg-[#FEAF00] hover:text-[black]"
             onClick={() =>
               handleMenuClick(
-                <h1 className="w-full flex justify-center">
-                  Selecione no menu ao lado o que deseja modificar.
-                </h1>
+                <OrderSettingsComponent
+                  orders={orders}
+                  orderStatus={orderStatus}
+                />
               )
             }
           >
@@ -88,6 +92,7 @@ const RestaurantSettingsComponent = ({
                   categories={categories}
                   restaurant={restaurant}
                   category={category}
+                  orderStatus={orderStatus}
                 />
               )
             }
@@ -103,6 +108,7 @@ const RestaurantSettingsComponent = ({
                   categories={categories}
                   restaurant={restaurant}
                   category={category}
+                  orderStatus={orderStatus}
                 />
               )
             }

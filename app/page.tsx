@@ -40,7 +40,22 @@ const RestaurantPage = async () => {
     },
   });
 
+  const order = await db.order.findMany({
+    include: {
+      Restaurant: true,
+      products: {
+        include: {
+          product: true,
+        },
+      },
+    },
+  });
+
   if (!restaurant) {
+    return notFound();
+  }
+
+  if (!order) {
     return notFound();
   }
   const session = await getServerSession(authOptions);

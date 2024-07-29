@@ -18,7 +18,7 @@ import { useState } from "react";
 interface ICategoryEditItemCardProps {
   category: Prisma.CategoryGetPayload<{}>;
   restaurant: Prisma.RestaurantGetPayload<{}>;
-  deleteCategory: () => void;
+  deleteCategory: (id: string) => void;
 }
 
 const CategorytEditItemCard = ({
@@ -85,7 +85,7 @@ const CategorytEditItemCard = ({
             <AlertDialogAction
               onClick={() => {
                 setIsSubmiLoading(true);
-                deleteCategory();
+                deleteCategory(category.id);
                 setIsSubmiLoading(false);
               }}
               disabled={isSubmitLoading}

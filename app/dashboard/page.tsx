@@ -22,13 +22,26 @@ const MyRestaurantSettings = async ({}) => {
     include: {
       products: {
         include: {
-          category: true,
+          category: {
+            include: {
+              Restaurant: true,
+            },
+          },
           Restaurant: true,
         },
       },
     },
   });
-
+  const orders = await db.order.findMany({
+    include: {
+      Restaurant: true,
+      products: {
+        include: {
+          product: true,
+        },
+      },
+    },
+  });
   if (!restaurant) {
     return (
       <h1 className="px-5 py-6 text-sm font-bold lg:px-12 xl:px-24 2xl:px-28">
@@ -54,6 +67,7 @@ const MyRestaurantSettings = async ({}) => {
       <RestaurantSettingsComponent
         restaurant={restaurant}
         categories={categories}
+        orders={orders}
         key="crud-product"
       />
     </div>

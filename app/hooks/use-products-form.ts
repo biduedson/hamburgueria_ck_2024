@@ -4,6 +4,8 @@ import { Decimal } from "decimal.js";
 import { newProductEmpty } from "../dto/new-product-dto";
 import { NextResponse } from "next/server";
 import { IDashboardProps } from "../dashboard/types/types-dashoboard";
+import { handleInputChangeCreateProduct } from "../api/utils/handle-input-change";
+import {handleInputPriceChange} from "../api/utils/handle-input-price";
 
 interface NewProduct {
   name: string;
@@ -14,10 +16,14 @@ interface NewProduct {
   restaurantId: string;
   categoryId: string;
 }
-const useProductForm = ({ restaurant,  category}: IDashboardProps) =>{
+
+const useProductForm = ({ restaurant, categories,category,}: IDashboardProps) =>{
+  
 const [isSubmitLoading, setIsSubmiLoading] = useState(false);
 const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
-const [currentProducts, setCurrentProducts] = useState(category.products );
+const [currentCategories, setCurrentCategories] = useState(categories);
+
+const [currentProducts, setCurrentProducts] = useState(category?.products);
 const [imageUrl, setImageUrl] = useState<File | null>(null);
 const [localImageUrl, setLocalImageUrl] = useState<string>("");
 const [openModal, setOpenModal] = useState(false);
@@ -52,67 +58,6 @@ const resetNewProduct = (restaurantId: string, categoryId: string) => {
   setLocalImageUrl("")
 };
 
-const handleInputChange = (
-  event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-) => {
-  const { id, value } = event.target;
-  setNewProduct((prevProduct) => ({
-    ...prevProduct,
-    [id]: id === "discountPercentage" ? parseInt(value) : value,
-  }));
-  setEmptyErrorMessage("");
-  const productEmpty = newProductEmpty(newProduct);
-
-  if (productEmpty.emptyError === false && imageUrl) {
-    btnAddTrue(true, false);
-  }
-  console.log(newProductEmpty(newProduct));
-  //console.log(productEmpty);
-  console.log(newProduct);
-};
-
-const handlePriceChange = (event: ChangeEvent<HTMLInputElement>) => {
-  let value = event.target.value;
-
-  // Remove todos os caracteres que não são dígitos
-  value = value.replace(/\D+/g, "");
-
-  // Remove zeros à esquerda
-  value = value.replace(/^0+/, "");
-
-  // Adiciona zeros à esquerda se necessário
-  while (value.length < 3) {
-    value = "0" + value;
-  }
-
-  // Adiciona o separador decimal
-  value =
-    value.slice(0, value.length - 2) + "," + value.slice(value.length - 2);
-
-  // Remove qualquer separador de milhar existente
-  value = value.replace(/\B(?=(\d{3})+(?!\d))/g, "");
-
-  // Adiciona separadores de milhar novamente
-  value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-
-  setPrice(value);
-
-  const numericValue = parseFloat(value.replace(/\./g, "").replace(",", "."));
-
-  if (!isNaN(numericValue)) {
-    setNewProduct((prevProduct) => ({
-      ...prevProduct,
-      price: new Decimal(numericValue),
-    }));
-  }
-
-  console.log(newProductEmpty(newProduct));
-  const productEmpty = newProductEmpty(newProduct);
-
-  if (productEmpty.emptyError === false && imageUrl) {
-    btnAddTrue(true, false);
-  }
-};
 const handleFocus = () => {
   if (price === "0,00") {
     setPrice("");
@@ -278,6 +223,78 @@ const handleImageChange = async (event: ChangeEvent<HTMLInputElement>) => {
     }
   }
 };
+const updateProduct = async (restaurantId: string, categoryId: string, productId:string) => {
+  const uploadedImage = await uploadImage(imageUrl);
+
+  if (!uploadedImage) {
+    setEmptyErrorMessage("Please upload an image");
+    return console.log("Please upload an image");
+  }
+
+  setNewProduct((prevProduct) => ({
+    ...prevProduct,
+    restaurantId: String(restaurantId),
+    categoryId: String(categoryId),
+    imageUrl: uploadedImage, // Use the uploaded image URL here
+  }));
+  const emptyData = newProductEmpty(newProduct);
+
+  if (emptyData.emptyError) {
+    setEmptyErrorMessage(emptyData.messageError!);
+    return console.log(emptyData.messageError!);
+  }
+  const newProductWithImageUrl = {
+    ...newProduct,
+    restaurantId: String(restaurantId),
+    categoryId: String(categoryId),
+    imageUrl: uploadedImage,
+  };
+
+  try {
+    const response = await fetch(`/api/updateProduct/${productId}`, {
+      method: "UPDATE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newProductWithImageUrl),
+    });
+    setIsSubmiLoading(true);
+    setBtnOpen(false);
+
+    const createdProduct = await response.json();
+
+    if (response.status !== 201) {
+      setEmptyErrorMessage(createdProduct || "Erro ao cadastrar Produto");
+      setDialogErrorOpen(true);
+      return console.log("Erro ao cadastrar Produto");
+    }
+
+    setCurrentProducts((prevProducts) => [...prevProducts, createdProduct]);
+
+    setActiveBtn({
+      newProductDto: false,
+      imageUrl: false,
+    });
+    setEmptyErrorMessage("");
+    resetNewProduct(restaurantId, categoryId);
+    setActiveBtn({
+      newProductDto: false,
+      imageUrl: false,
+    });
+    setLocalImageUrl("");
+    setPrice("");
+    btnAddTrue(false, false);
+    console.log("Produto cadastrado com sucesso");
+  } catch (error) {
+    return console.log("Erro interno do servidor");
+  } finally {
+    setIsSubmiLoading(false);
+    setActiveBtn({
+      newProductDto: false,
+      imageUrl: false,
+    });
+  }
+};
 
 const uploadImage = async (imageUrl: File | null) => {
   if (!imageUrl) {
@@ -326,6 +343,8 @@ return {
     isSubmitLoading,
     isConfirmDialogOpen,
     currentProducts,
+    currentCategories, 
+    setCurrentCategories,
     imageUrl,
     localImageUrl,
     openModal,
@@ -337,13 +356,30 @@ return {
     setNewProduct,
     price,
     setIsConfirmDialogOpen,
-    handleInputChange,
-    handlePriceChange,
+    handlePriceChangeUpdate:(event: ChangeEvent<HTMLInputElement>) =>
+      handleInputPriceChange(event,{
+        setPrice,
+        setNewProduct,
+        newProduct,
+        imageUrl,
+        btnAddTrue,
+        typeOperation:'UPDATE'
+      }),
+      handlePriceChangePost:(event: ChangeEvent<HTMLInputElement>) =>
+        handleInputPriceChange(event,{
+          setPrice,
+          setNewProduct,
+          newProduct,
+          imageUrl,
+          btnAddTrue,
+          typeOperation:'POST'
+        }),
     handleFocus,
     handleBlur,
     handleImageChange,
     addProduct,
     deleteProduct,
+    updateProduct,
     alertDialogErrorFunction,
     resetNewProduct,
     setEmptyErrorMessage,
@@ -354,6 +390,14 @@ return {
     setBtnOpen,
     setPrice,
     setLocalImageUrl,
+    handleInputChange:(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+      handleInputChangeCreateProduct(event, {
+        setNewProduct,
+        setEmptyErrorMessage,
+        newProduct,
+        imageUrl,
+        btnAddTrue,
+      }),
   };
 }
 export default useProductForm;

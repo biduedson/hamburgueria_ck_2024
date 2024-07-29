@@ -17,11 +17,13 @@ import AlertDialagDeleteProduct from "./alert-dialogs/alert-dialog-delete-produc
 import AlertDialogError from "./alert-dialogs/aleert-dialog-error";
 import useProductForm from "@/app/hooks/use-products-form";
 import { IDashboardProps } from "../types/types-dashoboard";
+import UpdateProductForm from "./form/update-product-form";
 
 const CrudProductsList = ({
   restaurant,
   categories,
   category,
+  orderStatus,
 }: IDashboardProps) => {
   const {
     isSubmitLoading,
@@ -38,12 +40,13 @@ const CrudProductsList = ({
     price,
     setIsConfirmDialogOpen,
     handleInputChange,
-    handlePriceChange,
+    handlePriceChangePost,
     handleFocus,
     handleBlur,
     handleImageChange,
     addProduct,
     deleteProduct,
+    updateProduct,
     setDialogErrorOpen,
     alertDialogErrorFunction,
     resetNewProduct,
@@ -57,6 +60,7 @@ const CrudProductsList = ({
     restaurant,
     categories,
     category,
+    orderStatus,
   });
   if (!restaurant) {
     return (
@@ -102,7 +106,7 @@ const CrudProductsList = ({
               </TableRow>
             </TableHeader>
             <TableBody className="w-full">
-              {currentProducts.map((product) => (
+              {currentProducts?.map((product) => (
                 <TableRow
                   key={product.id}
                   className="my-2 rounded-sm bg-[#ffffff] "
@@ -208,7 +212,7 @@ const CrudProductsList = ({
             setPrice("");
           }}
           handleInputChange={handleInputChange}
-          handlePriceChange={handlePriceChange}
+          handlePriceChangePost={handlePriceChangePost}
           handleFocus={handleFocus}
           handleBlur={handleBlur}
           handleImageChange={handleImageChange}
