@@ -35,7 +35,7 @@ interface ProductFormProps {
   handleInputChange: (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
-  handlePriceChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  handlePriceChangePost: (event: ChangeEvent<HTMLInputElement>) => void;
   handleFocus: () => void;
   handleBlur: () => void;
   handleImageChange: (event: ChangeEvent<HTMLInputElement>) => void;
@@ -55,7 +55,7 @@ const ProductForm = ({
   activeBtn,
   handleCancelBtn,
   handleInputChange,
-  handlePriceChange,
+  handlePriceChangePost,
   handleFocus,
   handleBlur,
   handleImageChange,
@@ -91,7 +91,7 @@ const ProductForm = ({
             <Input
               id="price"
               value={price}
-              onChange={handlePriceChange}
+              onChange={handlePriceChangePost}
               onFocus={handleFocus}
               onBlur={handleBlur}
               placeholder="Preço "
